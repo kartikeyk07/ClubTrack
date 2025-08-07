@@ -611,6 +611,7 @@ import { useRouter } from 'next/navigation'
 import { Search, Filter, Calendar, Plus, Users, DollarSign, Grid, List as ListIcon, Sparkles, TrendingUp, MapPin, Clock, Eye } from 'lucide-react'
 import { isToday, isTomorrow, isPast, isThisWeek, isThisMonth, format } from 'date-fns'
 import toast from 'react-hot-toast'
+import { deleteDoc, doc } from 'firebase/firestore'
 import { collection, onSnapshot, query, where } from 'firebase/firestore' // Updated imports: removed getDocs, added onSnapshot, query, where
 import { db } from '@/lib/firebase'
 
@@ -1068,11 +1069,24 @@ export default function EventsPage() {
                             router.push('/calendar')
                           }
                         }}
-                        onDelete={(event) => {
-                          toast.success('Delete functionality coming soon!', {
-                            icon: '🗑️',
-                          })
-                        }}
+                        
+
+// Inside your component where onDelete is defined:
+onDelete={async (event) => {
+  if (!event?.id) return toast.error('Event ID is missing.')
+
+  const confirmDelete = confirm(`Are you sure you want to delete "${event.title}"?`)
+  if (!confirmDelete) return
+
+  try {
+    await deleteDoc(doc(db, 'events', event.id))
+    toast.success('Event deleted successfully! 🗑️')
+  } catch (error) {
+    console.error('Error deleting event:', error)
+    toast.error('Failed to delete event.')
+  }
+}}
+
                       />
                     ))}
                 </div>
