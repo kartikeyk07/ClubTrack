@@ -1,5 +1,6 @@
 
 
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -16,9 +17,12 @@ import { useRouter } from 'next/navigation'
 import { Search, Filter, Calendar, Plus, Users, DollarSign, Grid, List as ListIcon, Sparkles, TrendingUp, MapPin, Clock, Eye } from 'lucide-react'
 import { isToday, isTomorrow, isPast, isThisWeek, isThisMonth, format } from 'date-fns'
 import toast from 'react-hot-toast'
-import { deleteDoc, doc } from 'firebase/firestore'
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { collection, onSnapshot, query, where } from 'firebase/firestore' // Updated imports: removed getDocs, added onSnapshot, query, where
 import { db } from '@/lib/firebase'
+import { EditEventModal } from '@/components/EditEventModal'
+import { ViewEventModal } from '@/components/ViewEventModal'
+
 
 export default function EventsPage() {
   const { user, loading } = useAuth()
@@ -31,6 +35,9 @@ export default function EventsPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [viewMode, setViewMode] = useState('grid')
   const [animationKey, setAnimationKey] = useState(0)
+  const [editingEvent, setEditingEvent] = useState(null)
+  const [viewEvent, setViewEvent] = useState(null)
+
 
   useEffect(() => {
     if (!loading && !user) {
@@ -142,6 +149,23 @@ export default function EventsPage() {
         return <Badge variant="destructive">Cancelled</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
+    }
+  }
+
+  const handleSaveEvent = async (values) => {
+    if (!editingEvent?.id) return
+    try {
+      const ref = doc(db, 'events', editingEvent.id)
+      await updateDoc(ref, {
+        ...values,
+        updatedAt: new Date().toISOString(),
+      })
+      toast.success('Event updated successfully! ✅')
+      setEditingEvent(null)
+      // No need to manually update local state; onSnapshot will refresh the list.
+    } catch (error) {
+      console.error('Error updating event:', error)
+      toast.error('Failed to update event.')
     }
   }
 
@@ -464,18 +488,14 @@ export default function EventsPage() {
                         isAdmin={user.role === 'admin'}
                         showActions={user.role === 'admin'}
                         delay={index * 100}
+                        onView={(event) => setViewEvent(event)}
                         onEdit={(event) => {
-                          toast.success('Edit functionality - redirecting to dashboard!', {
-                            icon: '⚡',
-                          })
                           if (user.role === 'admin') {
-                            router.push('/dashboard')
+                            setEditingEvent(event)
                           } else {
                             router.push('/calendar')
                           }
                         }}
-
-
                         // Inside your component where onDelete is defined:
                         onDelete={async (event) => {
                           if (!event?.id) return toast.error('Event ID is missing.')
@@ -508,12 +528,10 @@ export default function EventsPage() {
                         isAdmin={user.role === 'admin'}
                         showActions={user.role === 'admin'}
                         delay={index * 50}
+                        onView={(event) => setViewEvent(event)}
                         onEdit={(event) => {
-                          toast.success('Edit functionality - redirecting to dashboard!', {
-                            icon: '⚡',
-                          })
                           if (user.role === 'admin') {
-                            router.push('/dashboard')
+                            setEditingEvent(event)
                           } else {
                             router.push('/calendar')
                           }
@@ -556,6 +574,7 @@ export default function EventsPage() {
                                 key={event.id}
                                 className="hover:bg-muted/30 transition-colors cursor-pointer"
                                 style={{ animationDelay: `${index * 50}ms` }}
+                                onClick={() => setViewEvent(event)} // Open view modal on row click
                               >
                                 <TableCell>
                                   <div>
@@ -616,6 +635,22 @@ export default function EventsPage() {
           )}
         </div>
       </div>
+      {viewEvent && (
+        <ViewEventModal
+          isOpen={!!viewEvent}
+          event={viewEvent}
+          onClose={() => setViewEvent(null)}
+        />
+      )}
+
+      {editingEvent && (
+        <EditEventModal
+          open={!!editingEvent}
+          event={editingEvent}
+          onClose={() => setEditingEvent(null)}
+          onSave={handleSaveEvent}
+        />
+      )}
 
       <style jsx global>{`
         @keyframes blob {

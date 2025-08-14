@@ -13,13 +13,11 @@ import { Save, Trash2, Clock, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const categories = [
-  'Community Service',
-  'Fundraising',
-  'Social Event',
-  'Meeting',
-  'Conference',
-  'Workshop',
-  'Other'
+  'Community Service (CMD)',
+  'Club Service (CSD)',
+  'Professional Development (PDD)',
+  'International Service (ISD)',
+  'Meeting'
 ]
 
 export const EventModal = ({ 
