@@ -268,7 +268,7 @@ export default function EventsPage() {
 
           <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-500 hover:-translate-y-1 border-0 bg-gradient-to-br from-purple-50 to-violet-100 dark:from-purple-950/50 dark:to-violet-950/50">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Budget</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
               <div className="p-2 bg-purple-500 rounded-full group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <DollarSign className="h-4 w-4 text-white" />
               </div>

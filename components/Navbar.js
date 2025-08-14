@@ -24,14 +24,14 @@ export const Navbar = () => {
   const adminLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: Calendar },
     { href: '/events', label: 'Events', icon: Users },
-    { href: '/expenses', label: 'Expenses', icon: DollarSign },
+    // { href: '/expenses', label: 'Expenses', icon: DollarSign },
     { href: '/messages', label: 'Messages', icon: MessageSquare },
   ]
 
   const userLinks = [
     { href: '/calendar', label: 'Calendar', icon: Calendar },
     { href: '/events', label: 'Events', icon: Users },
-    { href: '/expenses', label: 'My Expenses', icon: DollarSign },
+    // { href: '/expenses', label: 'My Expenses', icon: DollarSign },
     { href: '/messages', label: 'Request Event', icon: MessageSquare },
   ]
 

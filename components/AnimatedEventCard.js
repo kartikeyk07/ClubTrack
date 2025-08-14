@@ -21,7 +21,9 @@ export const AnimatedEventCard = ({
   const [isHovered, setIsHovered] = useState(false)
   const [likeCount, setLikeCount] = useState(event.likes || Math.floor(Math.random() * 50) + 10)
 
-  const eventDate = new Date(event.date)
+  const eventDate = event.date && !isNaN(new Date(event.date).getTime())
+  ? new Date(event.date)
+  : null;
   const isEventToday = isToday(eventDate)
   const isEventTomorrow = isTomorrow(eventDate)
   const isEventPast = isPast(eventDate)
@@ -31,8 +33,9 @@ export const AnimatedEventCard = ({
   })
 
   const getDateLabel = () => {
-    if (isEventToday) return 'Today'
-    if (isEventTomorrow) return 'Tomorrow'
+    if (!eventDate) return 'No date';
+    if (isToday(eventDate)) return 'Today';
+    if (isTomorrow(eventDate)) return 'Tomorrow';
     return format(eventDate, 'MMM dd, yyyy')
   }
 

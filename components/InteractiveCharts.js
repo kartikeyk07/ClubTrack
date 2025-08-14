@@ -141,7 +141,7 @@ export const InteractiveCharts = () => {
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 cursor-pointer border-l-4 border-l-green-500">
           <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-            <CardTitle className="text-sm font-medium">Total Budget</CardTitle>
+            <CardTitle className="text-sm font-medium"></CardTitle>
             <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
               <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
             </div>
