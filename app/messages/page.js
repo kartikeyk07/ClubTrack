@@ -424,14 +424,14 @@ export default function MessagesPage() {
       setCollectionsInitialized(true)
       console.log('Collections initialized successfully!')
       
-      toast.success('Database initialized successfully! 🚀', {
-        icon: '🔧',
-        style: {
-          borderRadius: '10px',
-          background: '#8B5CF6',
-          color: '#fff',
-        },
-      })
+      // toast.success('Database initialized successfully! 🚀', {
+      //   icon: '🔧',
+      //   style: {
+      //     borderRadius: '10px',
+      //     background: '#8B5CF6',
+      //     color: '#fff',
+      //   },
+      // })
       
     } catch (error) {
       console.error('Error initializing collections:', error)
@@ -542,14 +542,14 @@ export default function MessagesPage() {
 
       const docRef = await addDoc(collection(db, 'requests'), newRequest)
       
-      toast.success('Event request submitted successfully! 🚀', {
-        icon: '✨',
-        style: {
-          borderRadius: '10px',
-          background: '#10B981',
-          color: '#fff',
-        },
-      })
+      // toast.success('Event request submitted successfully! 🚀', {
+      //   icon: '✨',
+      //   style: {
+      //     borderRadius: '10px',
+      //     background: '#10B981',
+      //     color: '#fff',
+      //   },
+      // })
       
       console.log('Request created with ID:', docRef.id)
     } catch (error) {

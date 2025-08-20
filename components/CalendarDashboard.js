@@ -43,7 +43,7 @@ export const CalendarDashboard = ({ isAdmin = true }) => {
         ...doc.data()
       }))
       setEvents(fetchedEvents)
-      toast.success('Events loaded from Firestore!', { icon: '🔄' }) // Optional feedback
+      // toast.success('Events loaded from Firestore!', { icon: '🔄' }) // Optional feedback
     }, (error) => {
       console.error('Error fetching events:', error)
       toast.error('Failed to load events')
@@ -68,7 +68,7 @@ export const CalendarDashboard = ({ isAdmin = true }) => {
         }
         const eventRef = doc(db, 'events', eventData.id)
         await updateDoc(eventRef, { ...eventData, updatedAt: new Date().toISOString() })
-        toast.success('Event updated successfully! ✨')
+        // toast.success('Event updated successfully! ✨')
       } else {
         // Add new event
         const newEvent = {
@@ -78,7 +78,7 @@ export const CalendarDashboard = ({ isAdmin = true }) => {
           isPublic: true // Example field; customize
         }
         await addDoc(collection(db, 'events'), newEvent)
-        toast.success('New event created successfully! 🚀')
+        // toast.success('New event created successfully! 🚀')
       }
       // Local state will auto-update via onSnapshot
     } catch (error) {
@@ -100,7 +100,7 @@ export const CalendarDashboard = ({ isAdmin = true }) => {
         return
       }
       await deleteDoc(doc(db, 'events', eventId))
-      toast.success('Event deleted successfully 🗑️')
+      // toast.success('Event deleted successfully 🗑️')
       // Local state will auto-update via onSnapshot
     } catch (error) {
       console.error('Error deleting event:', error)
