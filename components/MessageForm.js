@@ -60,7 +60,7 @@ export const MessageForm = ({
         additionalInfo: ''
       })
       
-      toast.success('Event request submitted successfully!')
+      // toast.success('Event request submitted successfully!')
     } catch (error) {
       toast.error('Failed to submit request')
     } finally {
@@ -74,7 +74,7 @@ export const MessageForm = ({
     setIsLoading(true)
     try {
       await onStatusUpdate(message.id, status)
-      toast.success(`Request ${status}!`)
+      // toast.success(`Request ${status}!`)
     } catch (error) {
       toast.error(`Failed to ${status} request`)
     } finally {

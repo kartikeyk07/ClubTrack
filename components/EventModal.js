@@ -138,7 +138,7 @@ export const EventModal = ({
       }
 
       await onSave(eventData)
-      toast.success(event ? 'Event updated successfully!' : 'Event created successfully!')
+      // toast.success(event ? 'Event updated successfully!' : 'Event created successfully!')
       onClose()
     } catch (error) {
       toast.error('Failed to save event')
@@ -153,7 +153,7 @@ export const EventModal = ({
     setIsLoading(true)
     try {
       await onDelete(event.id)
-      toast.success('Event deleted successfully!')
+      // toast.success('Event deleted successfully!')
       onClose()
     } catch (error) {
       toast.error('Failed to delete event')

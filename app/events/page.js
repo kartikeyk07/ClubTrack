@@ -1,6 +1,3 @@
-
-
-
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -22,7 +19,8 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore' // Upd
 import { db } from '@/lib/firebase'
 import { EditEventModal } from '@/components/EditEventModal'
 import { ViewEventModal } from '@/components/ViewEventModal'
-
+import { EventModal } from '@/components/EventModal'
+import { addDoc } from 'firebase/firestore'
 
 export default function EventsPage() {
   const { user, loading } = useAuth()
@@ -37,6 +35,7 @@ export default function EventsPage() {
   const [animationKey, setAnimationKey] = useState(0)
   const [editingEvent, setEditingEvent] = useState(null)
   const [viewEvent, setViewEvent] = useState(null)
+  const [showEventModal, setShowEventModal] = useState(false)
 
 
   useEffect(() => {
@@ -63,7 +62,7 @@ export default function EventsPage() {
         ...doc.data()
       }))
       setEvents(fetchedEvents)
-      toast.success('Events loaded!', { icon: '🔄' }) // Optional feedback
+      // toast.success('Events loaded!', { icon: '🔄' }) // Optional feedback
     }, (error) => {
       console.error('Error fetching events:', error)
       toast.error('Failed to load events: ' + error.message)
@@ -127,14 +126,14 @@ export default function EventsPage() {
     setCategoryFilter('all')
     setTimeFilter('all')
     setStatusFilter('all')
-    toast.success('Filters cleared! ✨', {
-      icon: '🔄',
-      style: {
-        borderRadius: '10px',
-        background: '#3B82F6',
-        color: '#fff',
-      },
-    })
+    // toast.success('Filters cleared! ✨', {
+    //   icon: '🔄',
+    //   style: {
+    //     borderRadius: '10px',
+    //     background: '#3B82F6',
+    //     color: '#fff',
+    //   },
+    // })
   }
 
   const getStatusBadge = (status) => {
@@ -160,7 +159,7 @@ export default function EventsPage() {
         ...values,
         updatedAt: new Date().toISOString(),
       })
-      toast.success('Event updated successfully! ✅')
+      // toast.success('Event updated successfully! ✅')
       setEditingEvent(null)
       // No need to manually update local state; onSnapshot will refresh the list.
     } catch (error) {
@@ -218,7 +217,10 @@ export default function EventsPage() {
             </div>
             {user.role === 'admin' && (
               <Button
-                onClick={() => router.push('/dashboard')}
+                onClick={() => {
+                  setEditingEvent(null) // Ensure it's a new event
+                  setShowEventModal(true) // Open the add event modal
+                }}
                 className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 gap-2 hover:scale-105 transition-all duration-300"
                 variant="ghost"
               >
@@ -283,7 +285,7 @@ export default function EventsPage() {
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-500 hover:-translate-y-1 border-0 bg-gradient-to-br from-orange-50 to-amber-100 dark:from-orange-950/50 dark:to-amber-950/50">
+          {/* <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-500 hover:-translate-y-1 border-0 bg-gradient-to-br from-orange-50 to-amber-100 dark:from-orange-950/50 dark:to-amber-950/50">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Participants</CardTitle>
               <div className="p-2 bg-orange-500 rounded-full group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
@@ -298,7 +300,7 @@ export default function EventsPage() {
                 Across all events
               </p>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Advanced Filters */}
@@ -505,7 +507,7 @@ export default function EventsPage() {
 
                           try {
                             await deleteDoc(doc(db, 'events', event.id))
-                            toast.success('Event deleted successfully! 🗑️')
+                            // toast.success('Event deleted successfully! 🗑️')
                           } catch (error) {
                             console.error('Error deleting event:', error)
                             toast.error('Failed to delete event.')
@@ -617,12 +619,12 @@ export default function EventsPage() {
                                     ₹{event.budget?.toLocaleString() || 0}
                                   </div>
                                 </TableCell>
-                                <TableCell>
+                                {/* <TableCell>
                                   <div className="flex items-center gap-2">
                                     <Users className="h-4 w-4 text-muted-foreground" />
                                     <span>{event.participants || 0}</span>
                                   </div>
-                                </TableCell>
+                                </TableCell> */}
                               </TableRow>
                             ))}
                         </TableBody>
@@ -649,6 +651,31 @@ export default function EventsPage() {
           event={editingEvent}
           onClose={() => setEditingEvent(null)}
           onSave={handleSaveEvent}
+        />
+      )}
+
+      {showEventModal && (
+        <EventModal
+          isOpen={showEventModal}
+          onClose={() => setShowEventModal(false)}
+          onSave={async (eventData) => {
+            // Add event logic here, similar to InteractiveCalendar
+            try {
+              // You may need to import addDoc and collection from firebase/firestore
+              await addDoc(collection(db, 'events'), {
+                ...eventData,
+                createdAt: new Date().toISOString(),
+                isPublic: true // or your logic
+              })
+              setShowEventModal(false)
+            } catch (error) {
+              toast.error('Failed to add event.')
+            }
+          }}
+          event={null}
+          selectedDate={new Date()}
+          isEditable={true}
+          isAdmin={true}
         />
       )}
 

@@ -6,65 +6,86 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { TrendingUp, TrendingDown, BarChart3, PieChart as PieChartIcon, Activity, RefreshCw } from 'lucide-react'
+import { collection, onSnapshot } from 'firebase/firestore'
+import { db } from '@/lib/firebase' // Adjust import to your firebase config
+import { isPast } from 'date-fns'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D']
-
-const monthlyData = [
-  { month: 'Jan', events: 4, budget: 2400, expenses: 2200 },
-  { month: 'Feb', events: 3, budget: 1800, expenses: 1600 },
-  { month: 'Mar', events: 6, budget: 3200, expenses: 2800 },
-  { month: 'Apr', events: 8, budget: 4500, expenses: 4100 },
-  { month: 'May', events: 5, budget: 2800, expenses: 2400 },
-  { month: 'Jun', events: 7, budget: 3800, expenses: 3200 },
-]
-
-const categoryData = [
-  { name: 'Community Service', value: 35, count: 8 },
-  { name: 'Fundraising', value: 25, count: 5 },
-  { name: 'Meetings', value: 20, count: 12 },
-  { name: 'Social Events', value: 12, count: 3 },
-  { name: 'Workshops', value: 8, count: 2 },
-]
-
-const budgetProgress = [
-  { category: 'Community Service', used: 75, total: 100 },
-  { category: 'Fundraising', used: 45, total: 80 },
-  { category: 'Meetings', used: 90, total: 100 },
-  { category: 'Social Events', used: 30, total: 60 },
-]
 
 export const InteractiveCharts = () => {
   const [activeChart, setActiveChart] = useState('overview')
   const [animatedValues, setAnimatedValues] = useState({})
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [events, setEvents] = useState([])
+  const [monthlyData, setMonthlyData] = useState([])
+  const [categoryData, setCategoryData] = useState([])
 
   useEffect(() => {
-    // Animate counter values
-    const totalEvents = 30
-    const totalBudget = 18500
-    const totalExpenses = 15800
+    // Real-time fetch from Firestore (same as page.js)
+    const eventsCollection = collection(db, 'events')
+    let q = eventsCollection
+
+    // Example: Only show public events for non-admins (customize as needed)
+    // if (user && user.role !== 'admin') {
+    //   q = query(eventsCollection, where('isPublic', '==', true))
+    // }
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedEvents = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      setEvents(fetchedEvents)
+    })
+    return () => unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    // Monthly Data (events and expenses)
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    const monthlyStats = months.map((month, i) => {
+      const filtered = events.filter(e => {
+        const d = new Date(e.date)
+        return d.getMonth() === i
+      })
+      return {
+        month,
+        events: filtered.length,
+        expenses: filtered.reduce((sum, e) => sum + (e.budget || 0), 0) // Use budget for expenses to match page.js
+      }
+    })
+    setMonthlyData(monthlyStats)
+
+    // Category Data
+    const categoryMap = {}
+    events.forEach(e => {
+      if (!categoryMap[e.category]) categoryMap[e.category] = { name: e.category, value: 0 }
+      categoryMap[e.category].value += 1
+    })
+    setCategoryData(Object.values(categoryMap))
+  }, [events])
+
+  useEffect(() => {
+    // Animated counters
+    const totalEvents = events.length
+    const totalExpenses = events.reduce((sum, e) => sum + (e.budget || 0), 0) // Use budget for expenses to match page.js
 
     const animateValue = (key, targetValue, duration = 2000) => {
       const startTime = Date.now()
       const animate = () => {
         const elapsed = Date.now() - startTime
         const progress = Math.min(elapsed / duration, 1)
-        const easeProgress = 1 - Math.pow(1 - progress, 3) // Ease out cubic
+        const easeProgress = 1 - Math.pow(1 - progress, 3)
         const currentValue = Math.floor(targetValue * easeProgress)
-        
         setAnimatedValues(prev => ({ ...prev, [key]: currentValue }))
-        
-        if (progress < 1) {
-          requestAnimationFrame(animate)
-        }
+        if (progress < 1) requestAnimationFrame(animate)
       }
       requestAnimationFrame(animate)
     }
 
     animateValue('events', totalEvents)
-    animateValue('budget', totalBudget)
     animateValue('expenses', totalExpenses)
-  }, [])
+  }, [events])
 
   const handleRefresh = () => {
     setIsRefreshing(true)
@@ -138,6 +159,7 @@ export const InteractiveCharts = () => {
           </CardContent>
         </Card>
 
+        {/* 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 cursor-pointer border-l-4 border-l-green-500">
           <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-transparent dark:from-green-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
@@ -156,6 +178,7 @@ export const InteractiveCharts = () => {
             </div>
           </CardContent>
         </Card>
+        */}
 
         <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 cursor-pointer border-l-4 border-l-orange-500">
           <div className="absolute inset-0 bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -202,7 +225,7 @@ export const InteractiveCharts = () => {
         </CardHeader>
         <CardContent>
           <Tabs value={activeChart} onValueChange={setActiveChart}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
                 Overview
@@ -215,12 +238,9 @@ export const InteractiveCharts = () => {
                 <Activity className="h-4 w-4" />
                 Trends
               </TabsTrigger>
-              <TabsTrigger value="budget" className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                Budget
-              </TabsTrigger>
             </TabsList>
 
+            {/* Overview Tab */}
             <TabsContent value="overview" className="mt-6">
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -244,6 +264,7 @@ export const InteractiveCharts = () => {
               </div>
             </TabsContent>
 
+            {/* Categories Tab */}
             <TabsContent value="categories" className="mt-6">
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -271,6 +292,7 @@ export const InteractiveCharts = () => {
               </div>
             </TabsContent>
 
+            {/* Trends Tab */}
             <TabsContent value="trends" className="mt-6">
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -281,23 +303,12 @@ export const InteractiveCharts = () => {
                     <Tooltip content={<CustomTooltip />} />
                     <Area 
                       type="monotone" 
-                      dataKey="budget" 
-                      stroke="#8884d8" 
-                      fill="url(#budgetGradient)"
-                      className="cursor-pointer"
-                    />
-                    <Area 
-                      type="monotone" 
                       dataKey="expenses" 
                       stroke="#82ca9d" 
                       fill="url(#expenseGradient)"
                       className="cursor-pointer"
                     />
                     <defs>
-                      <linearGradient id="budgetGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1}/>
-                      </linearGradient>
                       <linearGradient id="expenseGradient" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
                         <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.1}/>
@@ -305,20 +316,6 @@ export const InteractiveCharts = () => {
                     </defs>
                   </AreaChart>
                 </ResponsiveContainer>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="budget" className="mt-6">
-              <div className="space-y-6">
-                <h3 className="text-lg font-semibold">Budget Utilization by Category</h3>
-                {budgetProgress.map((item, index) => (
-                  <ProgressBar 
-                    key={index}
-                    category={item.category}
-                    used={item.used}
-                    total={item.total}
-                  />
-                ))}
               </div>
             </TabsContent>
           </Tabs>

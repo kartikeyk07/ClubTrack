@@ -22,7 +22,7 @@ export function EditEventModal({ event, open, onClose }) {
         description,
         budget: Number(budget) || 0
       })
-      toast.success('Event updated successfully! ✏️')
+      // toast.success('Event updated successfully! ✏️')
       onClose()
     } catch (err) {
       console.error(err)

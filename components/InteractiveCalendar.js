@@ -33,7 +33,7 @@ export const InteractiveCalendar = ({ events, onSaveEvent, onDeleteEvent, isAdmi
     
     setSelectedDate(date)
     setEditingEvent(null)
-    setIsModalOpen(true)
+    setIsModalOpen(true) // Commented out to disable add event form on date click
   }
 
   const handleEventClick = (event) => {
@@ -144,16 +144,16 @@ export const InteractiveCalendar = ({ events, onSaveEvent, onDeleteEvent, isAdmi
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {isAdmin && (
+              {/* {isAdmin && (
                 <Button 
-                  onClick={() => handleDateClick(new Date())} 
+                  // onClick={() => handleDateClick(new Date())} // Commented out to disable quick add event
                   size="sm"
                   className="gap-2 hover:scale-105 transition-transform duration-200"
                 >
                   <Plus className="h-4 w-4" />
                   Quick Add
                 </Button>
-              )}
+              )} */}
               {!isAdmin && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Lock className="h-3 w-3" />
@@ -208,8 +208,9 @@ export const InteractiveCalendar = ({ events, onSaveEvent, onDeleteEvent, isAdmi
                         }}
                       />
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium truncate">{event.title}</div>
-                        <div className="text-xs text-muted-foreground">{event.time || 'All day'}</div>
+                        <div className="text-xs font-medium truncate">
+                          {event.title} {event.time && <span className="text-xs text-muted-foreground">({event.time})</span>}
+                        </div>
                       </div>
                       {!isAdmin && !isEditable(event.createdAt) && (
                         <Lock className="h-3 w-3 text-muted-foreground" />

@@ -74,7 +74,7 @@ export const CalendarDashboard = ({ isAdmin = true }) => {
         const newEvent = {
           ...eventData,
           createdAt: new Date().toISOString(),
-          participants: Math.floor(Math.random() * 100) + 10, // Mock; replace with real data if needed
+          // participants: Math.floor(Math.random() * 100) + 10, // Mock; replace with real data if needed
           isPublic: true // Example field; customize
         }
         await addDoc(collection(db, 'events'), newEvent)
@@ -269,7 +269,7 @@ export const CalendarDashboard = ({ isAdmin = true }) => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {isAdmin && (
+              {/* {isAdmin && (
                 <Button 
                   className="w-full gap-2 hover:scale-105 transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl"
                   onClick={() => {
@@ -287,7 +287,7 @@ export const CalendarDashboard = ({ isAdmin = true }) => {
                   <Plus className="h-4 w-4" />
                   Quick Add Event
                 </Button>
-              )}
+              )} */}
               
               {isAdmin && (
                 <Button 

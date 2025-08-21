@@ -50,7 +50,7 @@ export default function LoginPage() {
   const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password)
   const user = userCredential.user
 
-  toast.success('Login successful!')
+  // toast.success('Login successful!')
 
   // Simple role check using email
   if (user.email === 'admin@rotary.com') {
@@ -81,7 +81,7 @@ export default function LoginPage() {
           <div className="mx-auto w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-4">
             <span className="text-primary-foreground font-bold text-xl">R</span>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Welcome to ROTRACT</h1>
+          <h1 className="text-3xl font-bold text-foreground">Welcome to ROTARACT</h1>
           <p className="text-muted-foreground mt-2">Sign in to your account</p>
         </div>
 

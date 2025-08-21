@@ -588,14 +588,14 @@ export default function MessagesPage() {
         }
       }
 
-      toast.success(`Request ${status} successfully! ✅`, {
-        icon: status === 'approved' ? '✅' : '❌',
-        style: {
-          borderRadius: '10px',
-          background: status === 'approved' ? '#10B981' : '#EF4444',
-          color: '#fff',
-        },
-      })
+      // toast.success(`Request ${status} successfully! ✅`, {
+      //   icon: status === 'approved' ? '✅' : '❌',
+      //   style: {
+      //     borderRadius: '10px',
+      //     background: status === 'approved' ? '#10B981' : '#EF4444',
+      //     color: '#fff',
+      //   },
+      // })
     } catch (error) {
       console.error('Error updating request:', error)
       toast.error('Failed to update request: ' + error.message)
@@ -644,14 +644,14 @@ export default function MessagesPage() {
 
       const eventRef = await addDoc(collection(db, 'events'), eventData)
       
-      toast.success('Event added to calendar! 📅', {
-        icon: '📅',
-        style: {
-          borderRadius: '10px',
-          background: '#3B82F6',
-          color: '#fff',
-        },
-      })
+      // toast.success('Event added to calendar! 📅', {
+      //   icon: '📅',
+      //   style: {
+      //     borderRadius: '10px',
+      //     background: '#3B82F6',
+      //     color: '#fff',
+      //   },
+      // })
       
       console.log('Event created with ID:', eventRef.id)
     } catch (error) {
@@ -701,14 +701,14 @@ export default function MessagesPage() {
       // Add to events collection
       const eventRef = await addDoc(collection(db, 'events'), adminEventData)
       
-      toast.success('Admin event created successfully! 🎉', {
-        icon: '👑',
-        style: {
-          borderRadius: '10px',
-          background: '#8B5CF6',
-          color: '#fff',
-        },
-      })
+      // toast.success('Admin event created successfully! 🎉', {
+      //   icon: '👑',
+      //   style: {
+      //     borderRadius: '10px',
+      //     background: '#8B5CF6',
+      //     color: '#fff',
+      //   },
+      // })
       
       return eventRef.id
     } catch (error) {
@@ -985,7 +985,7 @@ export default function MessagesPage() {
                               snapshot.docs.forEach(doc => {
                                 console.log('Document:', doc.id, doc.data())
                               })
-                              toast.success(`Found ${snapshot.docs.length} requests for your user ID`)
+                              // toast.success(`Found ${snapshot.docs.length} requests for your user ID`)
                             } catch (error) {
                               console.error('Manual query test error:', error)
                               toast.error('Query test failed: ' + error.message)

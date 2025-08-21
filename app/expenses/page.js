@@ -86,14 +86,14 @@ export default function ExpensesPage() {
           ? { ...expenseData, id: editingExpense.id }
           : expense
       ))
-      toast.success('Expense updated successfully!')
+      // toast.success('Expense updated successfully!')
     } else {
       const newExpense = {
         ...expenseData,
         id: Date.now().toString()
       }
       setExpenses([...expenses, newExpense])
-      toast.success('Expense added successfully!')
+      // toast.success('Expense added successfully!')
     }
 
     setIsModalOpen(false)
@@ -125,7 +125,7 @@ export default function ExpensesPage() {
 
   const handleDelete = (expenseId) => {
     setExpenses(expenses.filter(expense => expense.id !== expenseId))
-    toast.success('Expense deleted successfully!')
+    // toast.success('Expense deleted successfully!')
   }
 
   if (loading) {

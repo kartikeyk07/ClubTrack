@@ -74,7 +74,7 @@ export default function RegisterPage() {
     const result = await register(formData.name, formData.email, formData.password, 'user')
     
     if (result.success) {
-      toast.success('Registration successful!')
+      // toast.success('Registration successful!')
     } else {
       setError(result.error)
       toast.error(result.error)
