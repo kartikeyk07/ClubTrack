@@ -77,7 +77,7 @@ const login = async (email, password) => {
 
 
 
-const register = async (name, email, password, role) => {
+const register = async (name, email, password, role = "user") => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user
@@ -91,17 +91,17 @@ const register = async (name, email, password, role) => {
       role,
     })
 
-    const newUser = {
-      uid: user.uid,
-      email: user.email,
-      name,
-      role,
-    }
+    // const newUser = {
+    //   uid: user.uid,
+    //   email: user.email,
+    //   name,
+    //   role,
+    // }
 
-    setUser(newUser)
-    localStorage.setItem('user', JSON.stringify(newUser))
+    // setUser(newUser)
+    // localStorage.setItem('user', JSON.stringify(newUser))
 
-    router.push(role === 'admin' ? '/dashboard' : '/events')
+    // router.push(role === 'admin' ? '/dashboard' : '/events')
 
     return { success: true }
   } catch (error) {

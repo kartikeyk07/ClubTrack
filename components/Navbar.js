@@ -68,13 +68,13 @@ export const Navbar = () => {
 
           {/* Desktop User Menu */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-            </Button>
+            </Button> */}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -129,7 +129,7 @@ export const Navbar = () => {
                   </Link>
                 )
               })}
-              <div className="flex items-center justify-between px-3 py-2">
+              {/* <div className="flex items-center justify-between px-3 py-2">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -138,7 +138,7 @@ export const Navbar = () => {
                   {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
                   <span className="ml-2">Toggle Theme</span>
                 </Button>
-              </div>
+              </div> */}
               <Button
                 variant="ghost"
                 className="justify-start text-destructive"
