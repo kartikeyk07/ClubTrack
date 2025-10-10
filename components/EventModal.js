@@ -299,7 +299,7 @@ export const EventModal = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="budget">Estimated Budget ($)</Label>
+            <Label htmlFor="budget">Estimated Budget (₹)</Label>
             <Input
               id="budget"
               name="budget"

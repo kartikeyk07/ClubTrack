@@ -161,7 +161,6 @@ export default function EventsPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        {/* HEADER */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-8 mb-8 text-white">
           <div className="absolute inset-0 bg-black/10" />
           <div className="absolute inset-0 opacity-30">
