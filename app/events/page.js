@@ -120,7 +120,7 @@ export default function EventsPage() {
     setStatusFilter('all')
   }
 
-  const handleSaveEvent = async (values) => {
+  const handleUpdateEvent = async (values) => {
     if (!editingEvent?.id) return
     try {
       const ref = doc(db, 'events', editingEvent.id)
@@ -132,6 +132,32 @@ export default function EventsPage() {
     } catch (error) {
       console.error('Error updating event:', error)
       toast.error('Failed to update event.')
+    }
+  }
+
+  // add this handler (place near other handlers / effects)
+  const handleSaveEvent = async (eventData) => {
+    if (!eventData || !eventData.title) {
+      toast?.error?.('Event must have a title')
+      return
+    }
+
+    try {
+      // add to Firestore
+      const docRef = await addDoc(collection(db, 'events'), {
+        ...eventData,
+        createdAt: new Date().toISOString(),
+        participants: eventData.participants || 0,
+        registeredUsers: eventData.registeredUsers || []
+      })
+
+      // DO NOT add the new event to local state here — onSnapshot will deliver it and
+      // adding it locally as well causes duplicate entries.
+      toast?.success?.('Event created')
+      setShowEventModal(false)
+    } catch (err) {
+      console.error('Failed to add event:', err)
+      toast?.error?.('Failed to add event')
     }
   }
 
@@ -181,10 +207,7 @@ export default function EventsPage() {
             </div>
             {user.role === 'admin' && (
               <Button
-                onClick={() => {
-                  setEditingEvent(null)
-                  setShowEventModal(true)
-                }}
+                onClick={() => setShowEventModal(true)}
                 className="bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 gap-2 hover:scale-105 transition-all duration-300"
                 variant="ghost"
               >
@@ -295,26 +318,13 @@ export default function EventsPage() {
         <ViewEventModal isOpen={!!viewEvent} event={viewEvent} onClose={() => setViewEvent(null)} />
       )}
       {editingEvent && (
-        <EditEventModal open={!!editingEvent} event={editingEvent} onClose={() => setEditingEvent(null)} onSave={handleSaveEvent} />
+        <EditEventModal open={!!editingEvent} event={editingEvent} onClose={() => setEditingEvent(null)} onSave={handleUpdateEvent} />
       )}
       {showEventModal && (
         <EventModal
           isOpen={showEventModal}
           onClose={() => setShowEventModal(false)}
-          onSave={async (eventData) => {
-            try {
-              await addDoc(collection(db, 'events'), {
-                // ...eventData,
-                registeredUsers: [...event.registeredUsers, currentUserId],
-                createdAt: new Date().toISOString(),
-                isPublic: true,
-                participants: [],
-              })
-              setShowEventModal(false)
-            } catch (error) {
-              toast.error('Failed to add event.')
-            }
-          }}
+          onSave={handleSaveEvent}
           event={null}
           selectedDate={new Date()}
           isEditable={true}
